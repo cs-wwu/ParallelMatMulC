@@ -5,7 +5,7 @@
 #include "matmul.h"
 
 // Get the ith row and col value
-int mat_get(Matrix* mat, int row, int col) {
+int mat_get(const Matrix* mat, int row, int col) {
     return mat->values[row * mat->cols + col];
 }
 
@@ -15,7 +15,7 @@ void mat_set(Matrix* mat, int row, int col, int value) {
 }
 
 // Print the matrix out
-void mat_print(Matrix* mat) {
+void mat_print(const Matrix* mat) {
     printf("(%d, %d) --> [\n", mat->rows, mat->cols);
     for (int i = 0; i < mat->rows; i++) {
         for (int j = 0; j < mat->cols; j++) {
@@ -68,6 +68,28 @@ void mat_free(Matrix* mat) {
     free(mat);
 }
 
+// Duplicate this matrix.
+Matrix* mat_dup(const Matrix* mat) {
+    Matrix* result = mat_create(mat->rows, mat->cols);
+    memcpy(result->values, mat->values, mat->rows * mat->cols * sizeof(int));
+    return result;
+}
+
+// Return true only if the two matrices are equal
+bool mat_equal(const Matrix* mat1, const Matrix* mat2) {
+    if (mat1->rows != mat2->rows || mat1->cols != mat2->cols) {
+        return false;
+    }
+    for (int i = 0; i < mat1->rows; i++) {
+        for (int j = 0; j < mat1->cols; j++) {
+            if (mat_get(mat1, i, j) != mat_get(mat2, i, j)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 // Read the matrix from the file into memory. Alloc and return the matrix.
 // If the file can't be read, return NULL
 Matrix* mat_read(const char* filename) {
@@ -92,10 +114,10 @@ Matrix* mat_read(const char* filename) {
 }
 
 // Helper function to multiply row of mat1 with col of mat2
-int mul_row_col(Matrix* mat1, int row, Matrix* mat2, int col) {
+int mul_row_col(const Matrix* mat1, int row, const Matrix* mat2, int col) {
     assert(mat1->cols == mat2->rows);
     // printf("mul row=%d, col=%d\n", row, col);
-    int value = 1;
+    int value = 0;
     for (int i = 0; i < mat1->cols; i++) {
         value += mat_get(mat1, row, i) * mat_get(mat2, i, col);
     }
@@ -104,7 +126,7 @@ int mul_row_col(Matrix* mat1, int row, Matrix* mat2, int col) {
 
 // Sequential matrix multiplication. Allocate and return the result.
 // Return NULL if the matrices can't be multiplied
-Matrix* mat_mul_slow(Matrix* mat1, Matrix* mat2) {
+Matrix* mat_mul_slow(const Matrix* mat1, const Matrix* mat2) {
     if (mat1->cols != mat2->rows) {
         return NULL;
     }
@@ -121,7 +143,7 @@ Matrix* mat_mul_slow(Matrix* mat1, Matrix* mat2) {
 
 // Parallel matrix multiplication. Allocate and return the result.
 // Return NULL if the matrices can't be multiplied
-Matrix* mat_mul_fast(Matrix* mat1, Matrix* mat2) {
+Matrix* mat_mul_fast(const Matrix* mat1, const Matrix* mat2) {
     if (mat1->cols != mat2->rows) {
         return NULL;
     }

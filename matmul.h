@@ -1,6 +1,9 @@
 #ifndef MATMUL_H
 #define MATMUL_H
 
+#include <stdbool.h>
+
+
 // Define a matrix type
 typedef struct {
     int rows;
@@ -9,13 +12,13 @@ typedef struct {
 } Matrix;
 
 // Get the ith row and col value
-int mat_get(Matrix* mat, int row, int col);
+int mat_get(const Matrix* mat, int row, int col);
 
 // Set the ith row and col value
 void mat_set(Matrix* mat, int row, int col, int value);
 
 // Print the matrix out
-void mat_print(Matrix* mat);
+void mat_print(const Matrix* mat);
 
 // Generate a zero matrix of size rows and cols
 Matrix* mat_zero(int rows, int cols);
@@ -34,12 +37,18 @@ void mat_free(Matrix* mat);
 // If the file can't be read, return NULL
 Matrix* mat_read(const char* filename);
 
+// Duplicate this matrix.
+Matrix* mat_dup(const Matrix* mat);
+
+// Return true only if the two matrices are equal
+bool mat_equal(const Matrix* m1, const Matrix* m2);
+
 // Sequential matrix multiplication. Allocate and return the result.
 // Return NULL if the matrices can't be multiplied
-Matrix* mat_mul_slow(Matrix* mat1, Matrix* mat2);
+Matrix* mat_mul_slow(const Matrix* mat1, const Matrix* mat2);
 
 // Parallel matrix multiplication. Allocate and return the result.
 // Return NULL if the matrices can't be multiplied
-Matrix* mat_mul_fast(Matrix* mat1, Matrix* mat2);
+Matrix* mat_mul_fast(const Matrix* mat1, const Matrix* mat2);
 
 #endif // MATMUL_H
