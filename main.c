@@ -2,12 +2,12 @@
 #include "matmul.h"
 
 int main(int argc, char** argv) {
-    Matrix* m1 = mat_identity(6);
+    Matrix* m1 = mat_identity(2);
     mat_print(m1);
 
-    Matrix* m2 = mat_random(5, 10, 0, 100);
+    Matrix* m2 = mat_random(2, 2, 0, 100);
     mat_print(m2);
 
-    Matrix* m3 = mat_read("test/mat-5-10");
+    Matrix* m3 = mat_mul_slow(m1, m2);
     mat_print(m3);
 }

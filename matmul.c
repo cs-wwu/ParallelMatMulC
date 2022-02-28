@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "matmul.h"
 
 // Get the ith row and col value
@@ -90,12 +91,38 @@ Matrix* mat_read(const char* filename) {
     return mat;
 }
 
-
+// Helper function to multiply row of mat1 with col of mat2
+int mul_row_col(Matrix* mat1, int row, Matrix* mat2, int col) {
+    assert(mat1->cols == mat2->rows);
+    // printf("mul row=%d, col=%d\n", row, col);
+    int value = 1;
+    for (int i = 0; i < mat1->cols; i++) {
+        value += mat_get(mat1, row, i) * mat_get(mat2, i, col);
+    }
+    return value;
+}
 
 // Sequential matrix multiplication. Allocate and return the result.
 // Return NULL if the matrices can't be multiplied
-Matrix* mat_mul_slow(Matrix* mat1, Matrix* mat2);
+Matrix* mat_mul_slow(Matrix* mat1, Matrix* mat2) {
+    if (mat1->cols != mat2->rows) {
+        return NULL;
+    }
+
+    Matrix* result = mat_zero(mat1->cols, mat1->rows);
+    for (int i = 0; i < result->rows; i++) {
+        for (int j = 0; j < result->cols; j++) {
+            mat_set(result, i, j, mul_row_col(mat1, i, mat2, j));
+        }
+    }
+
+    return result;
+}
 
 // Parallel matrix multiplication. Allocate and return the result.
 // Return NULL if the matrices can't be multiplied
-Matrix* mat_mul_fast(Matrix* mat1, Matrix* mat2);
+Matrix* mat_mul_fast(Matrix* mat1, Matrix* mat2) {
+    if (mat1->cols != mat2->rows) {
+        return NULL;
+    }
+}
